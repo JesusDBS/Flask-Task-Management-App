@@ -1,0 +1,7 @@
+<ul>
+    {% if todos %}
+        {% for todo in todos %}
+        <li>{{ todo|capitalize }}</li>
+        {% endfor %}
+    {% endif %}
+</ul>
