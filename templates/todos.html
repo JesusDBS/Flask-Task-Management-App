@@ -1,7 +1,15 @@
-<ul>
-    {% if todos %}
-        {% for todo in todos %}
-        <li>{{ todo|capitalize }}</li>
-        {% endfor %}
-    {% endif %}
-</ul>
+{% extends "base.html" %}
+
+{% block title %}Task Management App{% endblock %}
+
+{% block page_content %}
+<div class="container">
+    <ul>
+        {% if todos %}
+            {% for todo in todos %}
+            <li>{{ todo|capitalize }}</li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}
