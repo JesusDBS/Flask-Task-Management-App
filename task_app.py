@@ -4,12 +4,13 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired 
 
-
+#App Config-------------------------------------
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "Super Secret String"
 
 bootstrap = Bootstrap(app)
 
+#WTForm classes---------------------------------
 class NameForm(FlaskForm):
     name = StringField("What's your name?", validators=[DataRequired()])
     submit = SubmitField("Submit")
@@ -18,6 +19,7 @@ class TaskForm(FlaskForm):
     todos = StringField("Insert your tasks separate by blank space", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
+#Error handlers---------------------------------
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
@@ -26,18 +28,24 @@ def page_not_found(e):
 def page_not_found(e):
     return render_template("500.html"), 500
 
+#Routes-----------------------------------------
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = NameForm()
     old_name = session.get('name')
+    context = {
+        'form': form,
+        'name': session.get('name')
+    }
     if form.validate_on_submit():
         if old_name is not None and old_name != form.name.data:
             flash("You changed your name!")
-        session['name'] = form.name.data 
+            session['task_list'] = ''
 
+        session['name'] = form.name.data 
         return redirect(url_for('index'))
-    return render_template('index.html', form=form,
-        name=session.get('name'))
+
+    return render_template('index.html', **context)
 
 @app.route('/todos', methods=['GET', 'POST'])
 def todos():
@@ -51,8 +59,8 @@ def todos():
 
     if form.validate_on_submit():
         session['task_list'] = [todo for todo in form.todos.data.split(' ') if todo]
-        
-        return redirect(url_for('todos'))    
+        return redirect(url_for('todos')) 
+
     return render_template('todos.html', **context)
 
 @app.route('/done')
