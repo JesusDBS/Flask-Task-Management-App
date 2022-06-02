@@ -1,10 +1,18 @@
-from flask import Flask
-from flask import make_response, render_template, redirect, url_for
+from flask import Flask, make_response, render_template, redirect, url_for, session, flash
 from flask_bootstrap import Bootstrap
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired 
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "Super Secret String"
+
 bootstrap = Bootstrap(app)
+
+class NameForm(FlaskForm):
+    name = StringField("What's your name?", validators=[DataRequired()])
+    submit = SubmitField("Submit")
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -14,9 +22,18 @@ def page_not_found(e):
 def page_not_found(e):
     return render_template("500.html"), 500
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    form = NameForm()
+    old_name = session.get('name')
+    if form.validate_on_submit():
+        if old_name is not None and old_name != form.name.data:
+            flash("You changed your name!")
+        session['name'] = form.name.data 
+        
+        return redirect(url_for('index'))
+    return render_template('index.html', form=form,
+        name=session.get('name'))
 
 @app.route('/todos/<todos>')
 def todos(todos):
