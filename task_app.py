@@ -1,13 +1,21 @@
+import os
 from flask import Flask, make_response, render_template, redirect, url_for, session, flash
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired 
+from wtforms.validators import DataRequired
+from flask_sqlalchemy import SQLAlchemy 
 
 #App Config-------------------------------------
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "Super Secret String"
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'sqlite:///' + os.path.join(basedir, 'tasks.sqlite')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
 
 #WTForm classes---------------------------------
@@ -18,6 +26,31 @@ class NameForm(FlaskForm):
 class TaskForm(FlaskForm):
     todos = StringField("Insert your tasks separate by blank space", validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+#Models----------------------------------------
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+    tasks = db.relationship('Tasks', backref='task_ids', lazy='dynamic')
+
+    def __repr__(self):
+        return '<User %r>' % self.username
+
+class Tasks(db.Model):
+    __tablename__ = 'tasks'
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(64), unique=True)
+    done = db.Column(db.Boolean, default=False)
+    user_ids = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    def __repr__(self):
+        return '<Tasks %r>' % self.name
+
+#Ingetration with shell------------------------
+@app.shell_context_processor
+def make_shell_context():
+    return dict(db=db, User=User, Tasks=Tasks)
 
 #Error handlers---------------------------------
 @app.errorhandler(404)
