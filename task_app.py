@@ -4,30 +4,36 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
-from flask_sqlalchemy import SQLAlchemy 
+from flask_sqlalchemy import SQLAlchemy
 
-#App Config-------------------------------------
-basedir = os.path.abspath(os.path.dirname(__file__))
+# App Config-------------------------------------
+# basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "Super Secret String"
-app.config['SQLALCHEMY_DATABASE_URI'] = \
-    'sqlite:///' + os.path.join(basedir, 'tasks.sqlite')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# app.config['SECRET_KEY'] = "Super Secret String"
+# app.config['SQLALCHEMY_DATABASE_URI'] = \
+#     'sqlite:///' + os.path.join(basedir, 'tasks.sqlite')
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
 
-#WTForm classes---------------------------------
+# WTForm classes---------------------------------
+
+
 class NameForm(FlaskForm):
     name = StringField("What's your name?", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
+
 class TaskForm(FlaskForm):
-    todos = StringField("Insert your tasks separate by blank space", validators=[DataRequired()])
+    todos = StringField(
+        "Insert your tasks separate by blank space", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
-#Models----------------------------------------
+# Models----------------------------------------
+
+
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -36,6 +42,7 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
 
 class Tasks(db.Model):
     __tablename__ = 'tasks'
@@ -47,21 +54,28 @@ class Tasks(db.Model):
     def __repr__(self):
         return '<Tasks %r>' % self.name
 
-#Ingetration with shell------------------------
+# Ingetration with shell------------------------
+
+
 @app.shell_context_processor
 def make_shell_context():
     return dict(db=db, User=User, Tasks=Tasks)
 
-#Error handlers---------------------------------
+# Error handlers---------------------------------
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
+
 
 @app.errorhandler(500)
 def page_not_found(e):
     return render_template("500.html"), 500
 
-#Routes-----------------------------------------
+# Routes-----------------------------------------
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = NameForm()
@@ -75,7 +89,7 @@ def index():
 
         if user:
             flash("Great to see you again!")
-            session['known'] = True 
+            session['known'] = True
 
         else:
             flash("Welcome here you can manage your tasks!")
@@ -89,25 +103,29 @@ def index():
 
     return render_template('index.html', **context)
 
+
 @app.route('/todos', methods=['GET', 'POST'])
 def todos():
     form = TaskForm()
     name = session.get('name')
     context = {
-            'form': form,
-            'name': name,
-            'todos': session.get('task_list')
+        'form': form,
+        'name': name,
+        'todos': session.get('task_list')
     }
 
     if form.validate_on_submit():
-        session['task_list'] = [todo for todo in form.todos.data.split(' ') if todo]
-        return redirect(url_for('todos')) 
+        session['task_list'] = [
+            todo for todo in form.todos.data.split(' ') if todo]
+        return redirect(url_for('todos'))
 
     return render_template('todos.html', **context)
+
 
 @app.route('/done')
 def done():
     return redirect(url_for('index'))
+
 
 @app.route('/about')
 def about():
