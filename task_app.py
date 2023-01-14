@@ -10,6 +10,13 @@ migrate = Migrate(app, db)
 def make_shell_context():
     return dict(db=db, User=User, Tasks=Tasks)
 
+@app.cli.command()
+def test():
+    """Run the unit tests."""
+    import unittest
+    tests = unittest.TestLoader().discover('tests')
+    unittest.TextTestRunner(verbosity=2).run(tests)
+
 # from flask import Flask, make_response, render_template, redirect, url_for, session, flash
 # from flask_bootstrap import Bootstrap
 # from flask_wtf import FlaskForm
