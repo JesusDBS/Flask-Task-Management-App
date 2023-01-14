@@ -1,4 +1,15 @@
 import os
+from app import create_app, db
+from app.models import User, Tasks
+from flask_migrate import Migrate
+
+app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+migrate = Migrate(app, db)
+
+@app.shell_context_processor
+def make_shell_context():
+    return dict(db=db, User=User, Tasks=Tasks)
+
 # from flask import Flask, make_response, render_template, redirect, url_for, session, flash
 # from flask_bootstrap import Bootstrap
 # from flask_wtf import FlaskForm
@@ -57,9 +68,9 @@ import os
 # Ingetration with shell------------------------
 
 
-@app.shell_context_processor
-def make_shell_context():
-    return dict(db=db, User=User, Tasks=Tasks)
+# @app.shell_context_processor
+# def make_shell_context():
+#     return dict(db=db, User=User, Tasks=Tasks)
 
 # Error handlers---------------------------------
 
@@ -104,29 +115,29 @@ def make_shell_context():
 #     return render_template('index.html', **context)
 
 
-@app.route('/todos', methods=['GET', 'POST'])
-def todos():
-    form = TaskForm()
-    name = session.get('name')
-    context = {
-        'form': form,
-        'name': name,
-        'todos': session.get('task_list')
-    }
+# @app.route('/todos', methods=['GET', 'POST'])
+# def todos():
+#     form = TaskForm()
+#     name = session.get('name')
+#     context = {
+#         'form': form,
+#         'name': name,
+#         'todos': session.get('task_list')
+#     }
 
-    if form.validate_on_submit():
-        session['task_list'] = [
-            todo for todo in form.todos.data.split(' ') if todo]
-        return redirect(url_for('todos'))
+#     if form.validate_on_submit():
+#         session['task_list'] = [
+#             todo for todo in form.todos.data.split(' ') if todo]
+#         return redirect(url_for('todos'))
 
-    return render_template('todos.html', **context)
-
-
-@app.route('/done')
-def done():
-    return redirect(url_for('index'))
+#     return render_template('todos.html', **context)
 
 
-@app.route('/about')
-def about():
-    return render_template("about.html")
+# @app.route('/done')
+# def done():
+#     return redirect(url_for('index'))
+
+
+# @app.route('/about')
+# def about():
+#     return render_template("about.html")
