@@ -1,9 +1,9 @@
 import os
 # from flask import Flask, make_response, render_template, redirect, url_for, session, flash
 # from flask_bootstrap import Bootstrap
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+# from flask_wtf import FlaskForm
+# from wtforms import StringField, SubmitField
+# from wtforms.validators import DataRequired
 # from flask_sqlalchemy import SQLAlchemy
 
 # App Config-------------------------------------
@@ -21,38 +21,38 @@ from wtforms.validators import DataRequired
 # WTForm classes---------------------------------
 
 
-class NameForm(FlaskForm):
-    name = StringField("What's your name?", validators=[DataRequired()])
-    submit = SubmitField("Submit")
+# class NameForm(FlaskForm):
+#     name = StringField("What's your name?", validators=[DataRequired()])
+#     submit = SubmitField("Submit")
 
 
-class TaskForm(FlaskForm):
-    todos = StringField(
-        "Insert your tasks separate by blank space", validators=[DataRequired()])
-    submit = SubmitField("Submit")
+# class TaskForm(FlaskForm):
+#     todos = StringField(
+#         "Insert your tasks separate by blank space", validators=[DataRequired()])
+#     submit = SubmitField("Submit")
 
 # Models----------------------------------------
 
 
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, index=True)
-    tasks = db.relationship('Tasks', backref='task_ids', lazy='dynamic')
+# class User(db.Model):
+#     __tablename__ = 'users'
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(64), unique=True, index=True)
+#     tasks = db.relationship('Tasks', backref='task_ids', lazy='dynamic')
 
-    def __repr__(self):
-        return '<User %r>' % self.username
+#     def __repr__(self):
+#         return '<User %r>' % self.username
 
 
-class Tasks(db.Model):
-    __tablename__ = 'tasks'
-    id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String(64), unique=True)
-    done = db.Column(db.Boolean, default=False)
-    user_ids = db.Column(db.Integer, db.ForeignKey('users.id'))
+# class Tasks(db.Model):
+#     __tablename__ = 'tasks'
+#     id = db.Column(db.Integer, primary_key=True)
+#     description = db.Column(db.String(64), unique=True)
+#     done = db.Column(db.Boolean, default=False)
+#     user_ids = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    def __repr__(self):
-        return '<Tasks %r>' % self.name
+#     def __repr__(self):
+#         return '<Tasks %r>' % self.name
 
 # Ingetration with shell------------------------
 
@@ -64,44 +64,44 @@ def make_shell_context():
 # Error handlers---------------------------------
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template("404.html"), 404
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     return render_template("404.html"), 404
 
 
-@app.errorhandler(500)
-def page_not_found(e):
-    return render_template("500.html"), 500
+# @app.errorhandler(500)
+# def page_not_found(e):
+#     return render_template("500.html"), 500
 
 # Routes-----------------------------------------
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    form = NameForm()
-    context = {
-        'form': form,
-        'name': session.get('name'),
-        'known': session.get('known', False)
-    }
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.name.data).first()
+# @app.route('/', methods=['GET', 'POST'])
+# def index():
+#     form = NameForm()
+#     context = {
+#         'form': form,
+#         'name': session.get('name'),
+#         'known': session.get('known', False)
+#     }
+#     if form.validate_on_submit():
+#         user = User.query.filter_by(username=form.name.data).first()
 
-        if user:
-            flash("Great to see you again!")
-            session['known'] = True
+#         if user:
+#             flash("Great to see you again!")
+#             session['known'] = True
 
-        else:
-            flash("Welcome here you can manage your tasks!")
-            user = User(username=form.name.data)
-            db.session.add(user)
-            db.session.commit()
-            session['known'] = False
+#         else:
+#             flash("Welcome here you can manage your tasks!")
+#             user = User(username=form.name.data)
+#             db.session.add(user)
+#             db.session.commit()
+#             session['known'] = False
 
-        session['name'] = form.name.data
-        return redirect(url_for('index'))
+#         session['name'] = form.name.data
+#         return redirect(url_for('index'))
 
-    return render_template('index.html', **context)
+#     return render_template('index.html', **context)
 
 
 @app.route('/todos', methods=['GET', 'POST'])
