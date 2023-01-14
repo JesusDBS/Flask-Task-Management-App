@@ -1,22 +1,22 @@
 import os
-from flask import Flask, make_response, render_template, redirect, url_for, session, flash
-from flask_bootstrap import Bootstrap
+# from flask import Flask, make_response, render_template, redirect, url_for, session, flash
+# from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 
 # App Config-------------------------------------
 # basedir = os.path.abspath(os.path.dirname(__file__))
 
-app = Flask(__name__)
+# app = Flask(__name__)
 # app.config['SECRET_KEY'] = "Super Secret String"
 # app.config['SQLALCHEMY_DATABASE_URI'] = \
 #     'sqlite:///' + os.path.join(basedir, 'tasks.sqlite')
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
-bootstrap = Bootstrap(app)
+# db = SQLAlchemy(app)
+# bootstrap = Bootstrap(app)
 
 # WTForm classes---------------------------------
 
