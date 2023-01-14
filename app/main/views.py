@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Flask, make_response, render_template, redirect, url_for, session, flash
 from . import main
-from .forms import NameForm
+from .forms import NameForm, TaskForm
 from ..import db
 from ..models import User
 
@@ -31,3 +31,30 @@ def index():
         return redirect(url_for('.index'))
 
     return render_template('index.html', **context)
+
+@main.route('/todos', methods=['GET', 'POST'])
+def todos():
+    form = TaskForm()
+    name = session.get('name')
+    context = {
+        'form': form,
+        'name': name,
+        'todos': session.get('task_list')
+    }
+
+    if form.validate_on_submit():
+        session['task_list'] = [
+            todo for todo in form.todos.data.split(' ') if todo]
+        return redirect(url_for('.todos'))
+
+    return render_template('todos.html', **context)
+
+
+@main.route('/done')
+def done():
+    return redirect(url_for('.index'))
+
+
+@main.route('/about')
+def about():
+    return render_template("about.html")
