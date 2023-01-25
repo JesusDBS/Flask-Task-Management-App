@@ -7,6 +7,7 @@ from . import login_manager
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     tasks = db.relationship('Tasks', backref='task_ids', lazy='dynamic')
     password_hash = db.Column(db.String(128))
