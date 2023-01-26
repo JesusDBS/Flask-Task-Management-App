@@ -10,9 +10,13 @@ from .. import db
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user is not None and user.verify_password(form.password.data):
-            login_user(user, form.remember_me.data)
+        email = form.email.data
+        password = form.password.data
+        remember_me = form.remember_me.data
+
+        user = User.get_user_by_email(email)
+        if user is not None and user.verify_password(password):
+            login_user(user, remember_me)
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
                 next = url_for('main.index')
@@ -25,11 +29,11 @@ def login():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(email=form.email.data,
-                    username=form.username.data,
-                    password=form.password.data)
-        db.session.add(user)
-        db.session.commit()
+        email = form.email.data
+        username = form.username.data
+        password = form.password.data
+
+        User.add_user(email, username, password)
         flash('You can now login.')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)

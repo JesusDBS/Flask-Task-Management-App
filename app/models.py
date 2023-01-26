@@ -23,6 +23,21 @@ class User(UserMixin, db.Model):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    @staticmethod
+    def get_user_by_email(email):
+        user = User.query.filter_by(email=email).first()
+        if user:
+            return user
+        return None
+
+    @staticmethod
+    def add_user(email, username, password):
+        user = User(email=email,
+                    username=username,
+                    password=password)
+        db.session.add(user)
+        db.session.commit()
+
     def __repr__(self):
         return '<User %r>' % self.username
 
