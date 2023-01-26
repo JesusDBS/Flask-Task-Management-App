@@ -1,11 +1,13 @@
-from datetime import datetime
-from flask import Flask, make_response, render_template, redirect, url_for, session, flash
+from flask import render_template, redirect, url_for
+from flask_login import current_user
 from . import main
-from .forms import NameForm, TaskForm
+# from .forms import NameForm, TaskForm
 from .. import db
-from ..models import User
+# from ..models import User
 
 
 @main.route('/')
 def index():
-    return render_template('index.html')
+    if current_user.is_authenticated:
+        return render_template('index.html')
+    return redirect(url_for('auth.login'))
