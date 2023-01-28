@@ -1,0 +1,9 @@
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% macro render_tasks(task) %}
+<li class="list-group-item">
+    <span class="badge">{{ task.done }}</span>
+    Descripción: {{ task.description }}
+</li>
+
+{% endmacro %}

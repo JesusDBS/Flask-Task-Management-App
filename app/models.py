@@ -1,6 +1,6 @@
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from . import login_manager
 
 
@@ -53,6 +53,25 @@ class Tasks(db.Model):
     description = db.Column(db.String(64), unique=True)
     done = db.Column(db.Boolean, default=False)
     user_ids = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    @staticmethod
+    def get_tasks():
+        tasks = current_user.tasks
+        return tasks
+
+    @staticmethod
+    def get_task_by_description(description):
+        task = Tasks.query.filter_by(description=description).first()
+        if task:
+            return task
+        return None
+
+    @staticmethod
+    def add_task(description, done=False):
+        new_task = Tasks(description=description, done=done,
+                         user_ids=current_user.id)
+        db.session.add(new_task)
+        db.session.commit()
 
     def __repr__(self):
         return '<Tasks %r>' % self.name
