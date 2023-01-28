@@ -7,3 +7,11 @@ class TaskForm(FlaskForm):
     description = StringField(
         "Task description", validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+
+class Delete(FlaskForm):
+    submit = SubmitField('Delete')
+
+
+class UpDate(FlaskForm):
+    submit = SubmitField('Update')

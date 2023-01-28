@@ -17,7 +17,7 @@
 <div class="col-md-8">
         <ul class="list-group">
                 {% for task in tasks %}
-                {{ macros.render_tasks(task) }}
+                {{ macros.render_tasks(task, delete, update) }}
                 {% endfor %}
         </ul>
 </div>

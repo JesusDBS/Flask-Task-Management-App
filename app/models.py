@@ -73,5 +73,20 @@ class Tasks(db.Model):
         db.session.add(new_task)
         db.session.commit()
 
+    @staticmethod
+    def delete_task(task_id):
+        task_deleted = Tasks.query.filter_by(
+            id=int(task_id), user_ids=current_user.id).first()
+        db.session.delete(task_deleted)
+        db.session.commit()
+        return task_deleted
+
+    @staticmethod
+    def update_task(task_id):
+        task_update = Tasks.query.filter_by(
+            id=int(task_id), user_ids=current_user.id).first()
+        task_update.done = False if task_update.done else True
+        db.session.commit()
+
     def __repr__(self):
         return '<Tasks %r>' % self.name
